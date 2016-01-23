@@ -1,0 +1,12 @@
+{
+    "name": "ughostephan/dump-sql",
+    "authors": [
+        {
+            "name": "Ugho Stephan",
+            "email": "stephan.ugho@gmail.com"
+        }
+    ],
+    "require": {
+        "ifsnop/mysqldump-php": "^2.1"
+    }
+}
