@@ -16,14 +16,20 @@ $q = $db->query('SHOW DATABASES');
 $databases = $q->fetchAll();
 $date = date("Ymd_His");
 
+$folder = "dumps/" . $date;
+
+if (!file_exists($folder)) {
+    mkdir($folder, 0777, true);
+}
+
 foreach ($databases as $database) {
     $database_name = $database->Database;
 
     if(!in_array($database_name, $exclude)) {
         try {
-            $sqlname = $database_name . '_' . $date . '.sql';
+            $sqlname = $database_name . '.sql';
             $dump = new IMysqldump\Mysqldump('mysql:host='.$db_host.';dbname='.$database_name, $db_root_user, $db_root_pass);
-            $dump->start('dumps/'.$sqlname);
+            $dump->start($folder . '/' . $sqlname);
         } catch (\Exception $e) {
             echo 'mysqldump-php error: ' . $e->getMessage();
         }
