@@ -7,6 +7,7 @@
         }
     ],
     "require": {
-        "ifsnop/mysqldump-php": "^2.1"
+        "ifsnop/mysqldump-php": "^2.1",
+        "perchten/rmrdir": "1.*"
     }
 }
