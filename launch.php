@@ -5,11 +5,11 @@ require 'vendor/autoload.php';
 use Ifsnop\Mysqldump as IMysqldump;
 
 // Here an array of exclude bases
-$exclude = ['information_schema', 'performance_schema', 'mysql'];
+$exclude = ['information_schema', 'performance_schema', 'mysql', 'phpmyadmin'];
 
 // Constants for mysql connection
 define("DB_HOST", "localhost", true);
-define("DB_ROOT_USER", "__CHANGE__", true);
+define("DB_ROOT_USER", "root", true);
 define("DB_ROOT_PASS", "__CHANGE__", true);
 
 // Constant for the dump folder
