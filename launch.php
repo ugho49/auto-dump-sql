@@ -12,7 +12,7 @@ echo "BEGIN of Dump database script at " . DateTime::createFromFormat('U.u', mic
 echo NL;
 
 // Here an array of exclude bases
-$exclude = ['information_schema', 'performance_schema', 'mysql'];
+$exclude = ['information_schema', 'performance_schema', 'mysql', 'phpmyadmin'];
 
 // Constants for mysql connection
 define("DB_HOST", "localhost", true);
