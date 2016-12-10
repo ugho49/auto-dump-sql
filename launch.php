@@ -4,13 +4,36 @@ require 'vendor/autoload.php';
 // Use Ifsnop lib for create Mysql dumps
 use Ifsnop\Mysqldump as IMysqldump;
 
+define("NL", "\n", true);
+
+echo "-------------------------------------" . NL;
+echo "-------------------------------------" . NL;
+echo "BEGIN of Dump database script at " . DateTime::createFromFormat('U.u', microtime(true))->format("Y-m-d H:i:s.u") . NL;
+echo NL;
+
 // Here an array of exclude bases
 $exclude = ['information_schema', 'performance_schema', 'mysql'];
 
 // Constants for mysql connection
 define("DB_HOST", "localhost", true);
-define("DB_ROOT_USER", "__CHANGE__", true);
-define("DB_ROOT_PASS", "__CHANGE__", true);
+define("DB_ROOT_USER", "____CHANGE_ME____", true);
+define("DB_ROOT_PASS", "____CHANGE_ME____", true);
+
+// analytics
+$number_of_bases_dumped=0;
+$number_of_bases_failed=0;
+
+//options
+$options = [
+    'databases' => true,
+    'add-locks' => false,
+    'no-create-info' => false,
+    'skip-comments' => true,
+    'add-drop-table' => false,
+    'single-transaction' => true,
+    'lock-tables' => false,
+    'add-locks' => false,
+];
 
 // Constant for the dump folder
 define("DUMP_FOLDER", realpath(dirname(__FILE__)) . "/dumps", true);
@@ -36,6 +59,8 @@ $folder = DUMP_FOLDER . "/" . $date;
 
 // If this folder don't exist, it has to be create
 if (!file_exists($folder)) {
+    echo "Create folder : " . $folder . NL;
+    echo NL;
     mkdir($folder, 0755, true);
 }
 
@@ -49,15 +74,25 @@ foreach ($databases as $database) {
             // the filename is database_name.sql
             $sqlname = $database_name . '.sql';
             // init dump for this base
-            $dump = new IMysqldump\Mysqldump('mysql:host=' . DB_HOST . ';dbname=' . $database_name, DB_ROOT_USER, DB_ROOT_PASS);
+            $dump = new IMysqldump\Mysqldump('mysql:host=' . DB_HOST . ';dbname=' . $database_name, DB_ROOT_USER, DB_ROOT_PASS, $options);
             // store the dump file in the folder
             $dump->start($folder . '/' . $sqlname);
+            // trace in console
+            echo "- Dump database name : " . $database_name . NL;
+            // increment
+            $number_of_bases_dumped++;
         } catch (\Exception $e) {
             // Show error
             echo 'mysqldump-php error: ' . $e->getMessage();
+            // increment
+            $number_of_bases_failed++;
         }
     }
 }
+
+echo NL;
+echo "Number of success : " . $number_of_bases_dumped . NL;
+echo "Number of failure : " . $number_of_bases_failed . NL;
 
 // Delete old dump according to the constant
 if (DUMP_DURATION > 0) {
@@ -85,8 +120,15 @@ if (DUMP_DURATION > 0) {
 
         // for all elements who are in the array
         foreach ($dirs as $d) {
+            echo NL;
+            echo "Remove folder " . $d['name'] . NL;
             // use rmrdir from perchten/rmrdir
             rmrdir($d['name']);
         }
     }
 }
+
+echo NL;
+echo "END of Dump database script at " . DateTime::createFromFormat('U.u', microtime(true))->format("Y-m-d H:i:s.u") . NL;
+echo "-------------------------------------" . NL;
+echo "-------------------------------------" . NL;
